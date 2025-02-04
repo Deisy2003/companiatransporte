@@ -1,0 +1,164 @@
+
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+
+
+<div class="container mt-5" style="max-width: 90%;">
+    <div class="row justify-content-center">
+        <!-- Formulario para agregar o editar conductores -->
+        <div class="col-md-6">
+            <form action="{% url 'guardarConductor' %}"  id="frm_agregar_conductor"  method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+                <h3 class="text-center">Agregar Conductor:</h3>
+                <br>
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="txt_nombre" class="form-label"><b>Nombre Completo:</b></label>
+                    <input type="text" class="form-control" name="txt_nombre" id="txt_nombre" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_licencia" class="form-label"><b>Licencia:</b></label>
+                    <input type="text" class="form-control {% if error_licencia %}is-invalid{% endif %}" name="txt_licencia" id="txt_licencia" value="{{ licencia|default:'' }}" required>
+                    {% if error_licencia %}
+                    <div class="invalid-feedback" style="color: red;">
+                        {{ error_licencia }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+
+                <div class="mb-3">
+                    <label for="txt_fecha_nacimiento" class="form-label"><b>Fecha de Nacimiento:</b></label>
+                    <input type="date" class="form-control" name="txt_fecha_nacimiento" id="txt_fecha_nacimiento" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_fecha_ingreso" class="form-label"><b>Fecha de Ingreso:</b></label>
+                    <input type="date" class="form-control" name="txt_fecha_ingreso" id="txt_fecha_ingreso" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_telefono" class="form-label"><b>Teléfono:</b></label>
+                    <input type="text" class="form-control" name="txt_telefono" id="txt_telefono" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_direccion" class="form-label"><b>Dirección:</b></label>
+                    <textarea class="form-control" name="txt_direccion" id="txt_direccion" rows="3" required></textarea>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="txt_estado" class="form-label"><b>Estado:</b></label>
+                    <select class="form-control" name="txt_estado" id="txt_estado" required>
+                        <option value="" disabled selected>Seleccionar</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Suspendido">Suspendido</option>
+                        <option value="Retirado">Retirado</option>
+                    </select>
+                </div>
+                
+
+                <div class="mb-3">
+                    <label for="txt_foto" class="form-label"><b>Foto:</b></label>
+                    <input type="file" class="form-control" name="txt_foto" id="txt_foto" accept="image/*" required>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-lg mx-2">Guardar</button>
+                    <button type="reset" class="btn btn-danger btn-lg mx-2" onclick="window.location.href='{% url 'listado_conductor' %}'">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'listado_conductor' %}" class="btn btn-warning btn-lg">
+        <i></i> Ver Todos los Conductores
+    </a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frm_agregar_conductor").validate({
+            rules: {
+                "txt_nombre": {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 200,
+                    letras: true,
+                },
+                "txt_licencia": {
+                    required: true,
+                    minlength: 10,
+                },
+                
+                "txt_fecha_nacimiento": {
+                    required: true,
+                },
+                "txt_fecha_ingreso": {
+                    required: true,
+                },
+                "txt_direccion": {
+                    required: true,
+                    minlength: 6
+                },
+                
+                "txt_estado": {
+                    required: true,
+                },
+                
+                "txt_foto": {
+                    required: true,
+                    extension: "jpg|jpeg|png|gif"
+                }
+
+
+                
+                
+                
+            },
+            messages: {
+                "txt_nombre": {
+                    required: "El nombre es obligatorio.",
+                    minlength: "El nombre debe tener al menos 3 caracteres.",
+                    maxlength: "El nombre no puede exceder los 200 caracteres."
+                },
+                "txt_licencia": {
+                    required: "La licencia es obligatorio.",
+                    minlength: "La licencia debe tener  10 caracteres.",
+                },
+                "txt_fecha_nacimiento": {
+                    required: "La fecha es obligatorio.",
+                }, 
+                "txt_fecha_ingreso": {
+                    required: "La fecha es obligatorio.",
+                },
+                
+                "txt_direccion": {
+                    required: "La dirección es obligatorio.",
+                    minlength: "La dirección debe tener al menos 6 caracteres.",
+                },
+              
+                "txt_estado": {
+                    required: "Selecione un estado.",
+                },
+                "txt_foto": {
+                    required: "Debe subir una imagen.",
+                    extension: "La imagen debe ser en formato JPG, JPEG, PNG o GIF."
+                }
+                
+                
+               
+                
+                
+            },
+            
+        });
+    });
+</script>
+
+{% endblock %}

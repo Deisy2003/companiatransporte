@@ -1,0 +1,87 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+<div class="container mt-5" style="max-width: 90%;">
+    <div class="row justify-content-center">
+        <!-- Formulario para agregar un bus -->
+        <div class="col-md-6">
+            <form action="{% url 'guardarBus' %}"  id="frm_agregar_bus" method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+                <h3 class="text-center">Agregar Bus:</h3>
+                <br>
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="numero_bus" class="form-label"><b>Numero de Bus:</b></label>
+                    <input type="number" class="form-control" id="numero_bus" name="numero_bus" required placeholder="Numero del bus">
+                </div>
+
+                <!-- Campo para el número de placa -->
+                <div class="mb-3">
+                    <label for="numero_placa" class="form-label"><b>Placa:</b></label>
+                    <input type="text" class="form-control" id="numero_placa" name="numero_placa" required placeholder="Número de placa">
+                </div>
+
+                <!-- Campo para la capacidad -->
+                <div class="mb-3">
+                    <label for="capacidad" class="form-label"><b>Capacidad:</b></label>
+                    <input type="number" class="form-control" id="capacidad" name="capacidad" required placeholder="Capacidad del bus">
+                </div>
+
+                <!-- Campo para el conductor -->
+                <div class="mb-3">
+                    <label for="conductor" class="form-label"><b>Conductor:</b></label>
+                    <select class="form-control" id="conductor" name="conductor" required>
+                        <option value="">Seleccione un conductor</option>
+                        {% for conductor in conductor %}
+                            <option value="{{ conductor.id }}">{{ conductor.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-lg mx-2">Guardar</button>
+                    <button type="reset" class="btn btn-danger btn-lg mx-2" onclick="window.location.href='{% url 'inicio' %}'">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#frm_agregar_bus").validate({
+            rules: {
+                "numero_placa": {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 15
+                },
+                "capacidad": {
+                    required: true,
+                    min: 1
+                },
+                "conductor": {
+                    required: true
+                }
+            },
+            messages: {
+                "numero_placa": {
+                    required: "El número de placa es obligatorio.",
+                    minlength: "El número de placa debe tener al menos 3 caracteres.",
+                    maxlength: "El número de placa no puede exceder los 15 caracteres."
+                },
+                "capacidad": {
+                    required: "La capacidad es obligatoria.",
+                    min: "La capacidad debe ser al menos 1."
+                },
+                "conductor": {
+                    required: "Debe seleccionar un conductor."
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

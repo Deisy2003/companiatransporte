@@ -1,0 +1,61 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+<div class="container mt-5" >
+    <h3 class="text-center">Agregar Cliente</h3>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="{% url 'guardarCliente' %}" method="POST" class="p-4 border rounded bg-light" >
+                {% csrf_token %}
+
+                <!-- Cédula -->
+                <div class="mb-3">
+                    <label for="cedula" class="form-label"><b>Cédula:</b></label>
+                    <input type="text" class="form-control" id="cedula" name="cedula" maxlength="10" pattern="\d{10}" 
+                        placeholder="Ingrese la cédula" required>
+                </div>
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label"><b>Nombre:</b></label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese el nombre" required>
+                </div>
+
+                <!-- Apellido -->
+                <div class="mb-3">
+                    <label for="apellido" class="form-label"><b>Apellido:</b></label>
+                    <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Ingrese el apellido" required>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-3">
+                    <label for="telefono" class="form-label"><b>Teléfono:</b></label>
+                    <input type="text" class="form-control" id="telefono" name="telefono" maxlength="15" 
+                        placeholder="Ingrese el número de teléfono" required>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label"><b>Correo Electrónico:</b></label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese el correo electrónico" required>
+                </div>
+
+                <!-- Dirección -->
+                <div class="mb-3">
+                    <label for="direccion" class="form-label"><b>Dirección:</b></label>
+                    <textarea class="form-control" id="direccion" name="direccion" rows="3" placeholder="Ingrese la dirección"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-lg mx-2">Guardar</button>
+                    <button type="button" class="btn btn-danger btn-lg mx-2" onclick="window.location.href='{% url 'listado_cliente' %}'">Cancelar</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

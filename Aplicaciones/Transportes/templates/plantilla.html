@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang ="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <title>Encabezado</title>
+        {% load static %}
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- DATATABLE -->
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <link href="{% static 'DataTables/datatables.min.css' %}" rel="stylesheet">
+        <script src="{% static 'DataTables/datatables.min.js' %}"></script>
+
+        <!-- validacion -->
+        <script src="{% static 'js/jquery.validate.min.js' %}"></script>
+        <script src="{% static 'js/jquery.validate.js' %}"></script>
+        <!-- mensajes elegantes -->
+        <link rel="stylesheet" href="{% static 'css/iziToast.css' %}">
+        <script src="{% static 'js/iziToast.min.js' %}"></script>
+        
+        <!-- Iconos  -->
+
+        <link href="{% static 'css/all.min.css' %}" rel="stylesheet">
+
+  
+        <style>
+            body {
+                padding-top: 56px;
+            }
+
+            .offcanvas {
+                width: 250px;
+            }
+
+            .offcanvas .nav-link {
+                font-size: 18px;
+                padding: 10px 15px;
+            }
+            .menu-icon {
+                font-size: 2.2rem; 
+            }
+        </style>
+
+        <style>
+            /* Elimina el icono que aparece dentro del campo de contraseña */
+            input[type="password"]::-ms-reveal,
+            input[type="password"]::-webkit-contacts-auto-fill-button,
+            input[type="password"]::-webkit-search-cancel-button,
+            input[type="password"]::-webkit-input-placeholder {
+                display: none !important;
+            }
+        </style>
+
+        
+    
+    </head>
+    <body>
+
+
+        <nav class="navbar navbar-dark bg-dark fixed-top">
+            <div class="container-fluid">
+                <button class="btn btn-dark me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                    <i class="fas fa-bars menu-icon"></i>
+                </button>
+                
+            </div>
+        </nav>
+
+        <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menú</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="nav flex-column">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'inicio' %}">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+
+                       
+
+                        {% if user.is_authenticated and user.perfil.rol == 'Administrador' %}
+                            
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listado_conductor' %}">
+                                    <i class="fas fa-bus"></i> Conductores
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listar_usuarios' %}">
+                                    <i class="fas fa-users"></i> Usuarios
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listado_bus' %}">
+                                    <i class="fas fa-bus-alt"></i> Buses
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listado_ruta' %}">
+                                    <i class="fas fa-route"></i> Rutas
+                                </a>
+                            </li>
+                        
+                    
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listado_horario' %}">
+                                    <i class="fas fa-clock"></i> Horarios
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'listado_cliente' %}">
+                                    <i class="fas fa-users"></i> Clientes
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" href="{% url 'dashboard_ventas' %}">
+                                    <i class="fas fa-chart-bar"></i> Reportes
+                                </a>
+                            </li>
+
+                        {% endif %}
+
+
+                    
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="{% url 'listado_venta' %}">
+                                <i class="fas fa-shopping-cart"></i> Ventas
+                            </a>
+                        </li>
+
+                    
+                        {% if user.is_authenticated %}
+                        
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="{% url 'cerrar_sesion' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="{% url 'login' %}">
+                                    <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                </ul>
+            </div>
+        </div>
+
+        <main class="container">
+            {% block contenido %}
+            {% endblock %}
+        </main>
+        
+    
+
+        <!-- Footer Section -->
+    
+        <footer class="bg-dark text-white text-center py-4 mt-auto">
+            <h3><b>Desarrollado por:</b> Deisy Díaz &copy;</h3>
+        </footer>
+        
+        {%if messages %}
+            {% for mensajeConfirmacion in messages %}
+                <script> 
+                    if ("{{mensajeConfirmacion.tags}}"=="success"){
+                        //alert(":) - {{mensajeConfirmacion}}");
+                        iziToast.success({
+                            title: 'CONFIRMACION',
+                            message: '{{mensajeConfirmacion}}',
+                            position: 'topRight'
+                        });
+                    }
+                </script>
+            {%endfor%}
+        {%endif%}
+
+        <style>
+            label.error{
+                color: red;
+                font-weight: bold;
+
+            }
+            input.error{
+                border: 1px solid red;
+            }
+        </style>
+
+        <script>
+            jQuery.validator.addMethod("letras", function(value, element) {            
+                return this.optional(element) || /^[A-Za-zÁÉÍÓÚÑáéíóúñ ]*$/.test(value);
+               
+              }, "Este campo solo acepta letras"); 
+        </script>
+
+
+        
+ 
+    </body>
+
+
+</html>

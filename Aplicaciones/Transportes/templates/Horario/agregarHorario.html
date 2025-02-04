@@ -1,0 +1,76 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+<div class="container mt-5">
+    <h3 class="text-center">Agregar Horario</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="{% url 'guardarHorario' %}" method="POST" class="p-4 border rounded bg-light">
+                {% csrf_token %}
+
+                <!-- Selección de Ruta -->
+                <select class="form-control" id="ruta" name="ruta" required>
+                    {% for ruta in ruta %}
+                        <option value="{{ ruta.id }}" data-precio="{{ ruta.precio }}">
+                            {{ ruta.origen }} - {{ ruta.destino }}
+                        </option>
+                    {% endfor %}
+                </select>
+                
+
+                <div class="form-group">
+                    <label for="bus" class="form-label"><b>Bus Responsable:</b></label>
+                    <select name="bus" id="bus" class="form-control">
+                        <option value="" disabled selected>Seleccione un bus</option>
+                        {% for bus in bus %}
+                            <option value="{{ bus.id }}">{{ bus.nombre_bus }} - {{ bus.numero_bus }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+            <!-- Mostrar Precio -->
+                <div class="mb-3">
+                    <label for="precio" class="form-label"><b>Precio de la Ruta:</b></label>
+                    <input type="text" class="form-control" id="precio" name="precio" readonly>
+                </div>
+                
+
+                <!-- Hora de Salida -->
+                <div class="mb-3">
+                    <label for="hora_salida" class="form-label"><b>Hora de Salida:</b></label>
+                    <input type="time" class="form-control" id="hora_salida" name="hora_salida" required>
+                </div>
+
+                <!-- Hora de Llegada -->
+                <div class="mb-3">
+                    <label for="hora_llegada" class="form-label"><b>Hora de Llegada:</b></label>
+                    <input type="time" class="form-control" id="hora_llegada" name="hora_llegada" required>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-lg mx-2">Guardar Horario</button>
+                    <button type="button" class="btn btn-danger btn-lg mx-2" onclick="window.location.href='{% url 'listado_horario' %}'">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rutaSelect = document.getElementById('ruta');
+        const precioInput = document.getElementById('precio');
+
+        // Actualizar el precio cuando cambie la ruta seleccionada
+        rutaSelect.addEventListener('change', function () {
+            const selectedOption = rutaSelect.options[rutaSelect.selectedIndex];
+            const precio = selectedOption.getAttribute('data-precio');
+            precioInput.value = precio ? `$${precio}` : ''; // Mostrar el precio formateado
+        });
+    });
+</script>
+
+
+{% endblock %}

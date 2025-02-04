@@ -1,0 +1,96 @@
+{% extends "plantilla.html" %}
+
+{% block contenido %}
+<div class="container-fluid mt-5">
+    <h3 class="text-center">Listado de Conductores</h3>
+
+    <a href="{% url 'agregarConductor' %}" class="btn btn-primary">Agregar Conductor</a>
+
+
+
+
+    <table class="table w-100 table-striped"  id="tabla-conductor">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Licencia</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Fecha de Ingreso</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                <th>Foto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for conductor in conductor %}
+            <tr>
+                <td>{{ conductor.id }}</td>
+                <td>{{ conductor.nombre }}</td>
+                <td>{{ conductor.licencia }}</td>
+                <td>{{ conductor.fecha_nacimiento }}</td>
+                <td>{{ conductor.fecha_ingreso }}</td>
+                <td>{{ conductor.telefono }}</td>
+                <td>{{ conductor.direccion }}</td>
+                <td>{{ conductor.estado }}</td>
+                <td>
+                    {% if conductor.foto %}
+                        <img src="{{ conductor.foto.url }}" alt="Foto de {{ conductor.nombre }}" style="max-width: 100px; height: auto;">
+                    {% else %}
+                        Sin Foto
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'editar_conductor' conductor.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminarConductor' conductor.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este conductor?')">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center">No hay conductores registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#tabla-conductor').DataTable({
+            "language": {
+                "sEmptyTable": "No hay datos disponibles",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "sInfoFiltered": "(filtrado de _MAX_ entradas)",
+                "sInfoPostFix": "",
+                "sLengthMenu": "Mostrar _MENU_ entradas",
+                "sLoadingRecords": "Cargando...",
+                "sProcessing": "Procesando...",
+                "sSearch": "Buscar:",
+                "sZeroRecords": "No se encontraron resultados",
+                "oPaginate": {
+                    "sFirst": "<",
+                    "sLast": ">",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            },
+            "lengthMenu": [ [5, 10, 15, 20], [5, 10, 15, 20] ], // Opciones de paginación
+            "initComplete": function() {
+                // Cambiar el tamaño del input de búsqueda
+                $('input[type="search"]').css({
+                    "width": "400px", // Ancho del campo de búsqueda
+                    "padding": "8px"
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

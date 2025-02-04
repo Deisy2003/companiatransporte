@@ -1,0 +1,77 @@
+{% extends "plantilla.html" %}
+
+{% block contenido %}
+<div class="container-fluid mt-5">
+    <h3 class="text-center">Listado de Usuarios</h3>
+    <a href="{% url 'registrar_usuario' %}" class="btn btn-primary">Agregar Usuario</a>
+
+   
+    <table class="table w-100 table-striped"  id="tabla-usuario">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.username }}</td>
+                <td>********</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.perfil.rol }}</td>
+                <td>
+                    <a href="{% url 'editarUsuario' usuario.id %}" class="btn btn-warning btn-sm">Actualizar</a>
+                    <a href="{% url 'eliminar_usuario' usuario.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No hay usuarios registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#tabla-usuario').DataTable({
+            "language": {
+                "sEmptyTable": "No hay datos disponibles",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "sInfoFiltered": "(filtrado de _MAX_ entradas)",
+                "sInfoPostFix": "",
+                "sLengthMenu": "Mostrar _MENU_ entradas",
+                "sLoadingRecords": "Cargando...",
+                "sProcessing": "Procesando...",
+                "sSearch": "Buscar:",
+                "sZeroRecords": "No se encontraron resultados",
+                "oPaginate": {
+                    "sFirst": "<",
+                    "sLast": ">",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            },
+            "lengthMenu": [ [5, 10, 15, 20], [5, 10, 15, 20] ], // Opciones de paginación
+            "initComplete": function() {
+                // Cambiar el tamaño del input de búsqueda
+                $('input[type="search"]').css({
+                    "width": "400px", // Ancho del campo de búsqueda
+                    "padding": "8px"
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

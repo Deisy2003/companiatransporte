@@ -1,0 +1,229 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+
+<style>
+    .asientos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Ajusta el número de columnas automáticamente */
+        gap: 30px; /* Espacio entre los asientos */
+        margin-top: 10px;
+    }
+
+    .asientos-grid div {
+        text-align: center;
+    }
+
+    .asientos-grid input[type="checkbox"] {
+        margin-right: 5px; /* Espacio entre el checkbox y la etiqueta */
+    }
+</style>
+
+
+<div class="container mt-5">
+    <h3 class="text-center mb-4 text-dark">Editar Venta</h3>
+
+    <form method="POST" action="{% url 'editar_venta' venta.id %}" class="shadow-lg p-4 rounded bg-white">
+        {% csrf_token %}
+        
+        <!-- Cédula -->
+        <div class="form-group">
+            <label for="cedula" class="font-weight-bold text-muted">Cédula:</label>
+            <input type="text" class="form-control form-control-lg" id="cedula" name="cedula" value="{{ venta.cliente.cedula }}" required>
+        </div>
+
+        <!-- Nombre -->
+        <div class="form-group">
+            <label for="nombre" class="font-weight-bold text-muted">Nombre:</label>
+            <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" value="{{ venta.cliente.nombre }}" >
+        </div>
+
+        <!-- Apellido -->
+        <div class="form-group">
+            <label for="apellido" class="font-weight-bold text-muted">Apellido:</label>
+            <input type="text" class="form-control form-control-lg" id="apellido" name="apellido" value="{{ venta.cliente.apellido }}" >
+        </div>
+
+       
+        <div class="form-group">
+            <label for="ruta" class="font-weight-bold text-muted">Ruta y Horario:</label>
+            <select name="ruta" id="ruta" class="form-control form-control-lg">
+                <option value="" disabled>Seleccione la ruta</option>
+                {% for ruta in rutas %}
+                    {% for horario in ruta.horario_set.all %}
+                        <option value="{{ horario.id }}" 
+                                data-precio="{{ ruta.precio }}" 
+                                data-bus="{{ horario.bus.nombre_bus }} {{ horario.bus.numero_bus }}"
+                                data-salida="{{ horario.hora_salida }}" 
+                                data-llegada="{{ horario.hora_llegada }}" 
+                                data-capacidad="{{ horario.bus.capacidad }}"
+                                {% if horario.id == venta.horario.id %}selected{% endif %}>
+                            {{ ruta.origen }} - {{ ruta.destino }} - Hora: {{ horario.hora_salida }}
+                        </option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+        </div>
+
+        
+        
+        <!-- Campos relacionados -->
+        <div class="form-group">
+            <label for="precio" class="font-weight-bold text-muted">Precio:</label>
+            <input type="text" class="form-control form-control-lg" id="precio" name="precio" value="{{ venta.ruta.precio }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="nombre_bus" class="font-weight-bold text-muted">Bus:</label>
+            <input type="text" class="form-control form-control-lg" id="nombre_bus" name="nombre_bus" value="{{ venta.horario.bus.nombre_bus }} {{ venta.horario.bus.numero_bus }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="hora_salida" class="font-weight-bold text-muted">Hora de Salida:</label>
+            <input type="text" class="form-control form-control-lg" id="hora_salida" name="hora_salida" value="{{ venta.horario.hora_salida }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="hora_llegada" class="font-weight-bold text-muted">Hora de Llegada:</label>
+            <input type="text" class="form-control form-control-lg" id="hora_llegada" name="hora_llegada" value="{{ venta.horario.hora_llegada }}" readonly>
+        </div>
+        
+        
+        <!-- Asientos -->
+        
+     
+
+        <div class="form-group">
+            <label for="asiento" class="font-weight-bold text-muted">Seleccione el Asiento:</label>
+            <div id="asientosDisponibles" class="asientos-grid">
+                {% for i in rango_asientos %}
+                    <div>
+                        <input type="checkbox" name="asiento" value="A{{ i }}" 
+                               id="asiento{{ i }}" 
+                               {% if "A"|add:i|stringformat:"s" in asientos_seleccionados %}checked{% endif %}>
+                        <label for="asiento{{ i }}">A{{ i }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="cantidad_seleccionada" class="font-weight-bold text-muted">Cantidad de Asientos Seleccionados:</label>
+            <input type="text" class="form-control form-control-lg" id="cantidad_seleccionada" name="cantidad_seleccionada" readonly>
+        </div>
+        
+       <!-- Total Venta -->
+        <div class="form-group">
+            <label for="total_venta" class="font-weight-bold text-muted">Total Venta:</label>
+            <input type="text" class="form-control form-control-lg" id="total_venta" name="total_venta" value="{{ venta.total }}" readonly>
+        </div>
+
+        <!-- Asientos -->
+    
+
+
+
+
+        <!-- Botón de Actualizar -->
+        <button type="submit" class="btn btn-dark btn-lg btn-block mt-4">Actualizar Venta</button>
+    </form>
+</div>
+
+
+<script>
+    $(document).ready(function(){
+        // Buscar cliente por cédula
+        $('#buscarCedula').click(function(){
+            var cedula = $('#cedula').val();
+            
+            if (cedula) {
+                $.ajax({
+                    url: '{% url "buscar_cliente" %}',  
+                    data: {'cedula': cedula},
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.exists) {
+                            $('#nombre').val(response.nombre);
+                            $('#apellido').val(response.apellido);
+                            $('#telefono').val(response.telefono);
+                            $('#email').val(response.email);
+                            $('#direccion').val(response.direccion);
+                        } else {
+                            $('#nombre').val('');
+                            $('#apellido').val('');
+                            $('#telefono').val('');
+                            $('#email').val('');
+                            $('#direccion').val('');
+                            alert('Cliente no encontrado, ingrese los datos manualmente.');
+                        }
+                    },
+                    error: function() {
+                        alert('Error al buscar el cliente.');
+                    }
+                });
+            } else {
+                $('#nombre').val('');
+                $('#apellido').val('');
+                $('#telefono').val('');
+                $('#email').val('');
+                $('#direccion').val('');
+            }
+        });
+
+        // Actualizar el precio, nombre del bus y asientos disponibles cuando se cambia la ruta
+        $('#ruta').change(function() {
+            // Resetear el total cuando se cambie la ruta
+            $('#total_venta').val('0.00');
+
+            var rutaSeleccionada = $(this).find(':selected');
+            var precio = parseFloat(rutaSeleccionada.data('precio')); // Asegurarnos de que el precio sea un número
+            var nombreBus = rutaSeleccionada.data('bus');
+            var horaSalida = rutaSeleccionada.data('salida');
+            var horaLlegada = rutaSeleccionada.data('llegada');
+            var capacidadBus = parseInt(rutaSeleccionada.data('capacidad')); // Asegurarnos de que la capacidad sea un número
+
+            // Actualizar los campos en el formulario
+            $('#precio').val(precio.toFixed(2)); // Mostrar el precio correspondiente
+            $('#nombre_bus').val(nombreBus); // Mostrar el nombre y número del bus
+            $('#hora_salida').val(horaSalida); // Mostrar la hora de salida
+            $('#hora_llegada').val(horaLlegada); // Mostrar la hora de llegada
+
+            // Limpiar los asientos anteriores
+            $('#asientosDisponibles').empty();
+
+            // Crear los checkboxes de los asientos
+            for (var i = 1; i <= capacidadBus; i++) {
+                var asiento = 'A' + i; // Asientos en formato A1, A2, A3, ...
+                var checkboxHTML = '<div><input type="checkbox" name="asiento" value="' + asiento + '" id="asiento' + i + '"> <label for="asiento' + i + '"> ' + asiento + '</label></div>';
+                $('#asientosDisponibles').append(checkboxHTML);
+            }
+
+            // Actualizar el total cada vez que se cambie el número de asientos seleccionados
+            $('#asientosDisponibles').on('change', 'input[type="checkbox"]', function() {
+                var cantidadSeleccionada = $('input[name="asiento"]:checked').length; // Número de asientos seleccionados
+                if (!isNaN(precio) && cantidadSeleccionada > 0) {
+                    var total = cantidadSeleccionada * precio; // Multiplicar por el precio
+                    $('#total_venta').val(total.toFixed(2)); // Actualizar el total
+                } else {
+                    $('#total_venta').val('0.00'); // Si no hay asientos seleccionados, mostrar 0
+                }
+            });
+        });
+
+        // Actualizar el total cuando se seleccionen o desmarquen los asientos
+        $('#asientosDisponibles').on('change', 'input[type="checkbox"]', function() {
+            var rutaSeleccionada = $('#ruta').find(':selected');
+            var precio = parseFloat(rutaSeleccionada.data('precio')); // Obtener el precio de la ruta seleccionada
+
+            // Calcular el total basado en los asientos seleccionados
+            var cantidadSeleccionada = $('input[name="asiento"]:checked').length; // Número de asientos seleccionados
+            if (!isNaN(precio) && cantidadSeleccionada > 0) {
+                var total = cantidadSeleccionada * precio; // Calcular el total
+                $('#total_venta').val(total.toFixed(2)); // Actualizar el total
+            } else {
+                $('#total_venta').val('0.00'); // Si no hay asientos seleccionados, poner total en 0
+            }
+            $('#cantidad_seleccionada').val(cantidadSeleccionada);
+        });
+    });
+</script>
+
+
+{% endblock %}

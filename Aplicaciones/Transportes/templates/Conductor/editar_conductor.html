@@ -1,0 +1,71 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+<div class="container mt-5" style="max-width: 90%;">
+    <div class="row justify-content-center">
+        <!-- Formulario para editar conductor -->
+        <div class="col-md-6">
+            <form action="{% url 'editar_conductor' conductor.id %}" method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light">
+                <h3 class="text-center">Editar Conductor:</h3>
+                <br>
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="txt_nombre" class="form-label"><b>Nombre Completo:</b></label>
+                    <input type="text" class="form-control" name="txt_nombre" id="txt_nombre" value="{{ conductor.nombre }}" placeholder="Ingrese el nombre completo">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_licencia" class="form-label"><b>Licencia:</b></label>
+                    <input type="text" class="form-control" name="txt_licencia" id="txt_licencia" value="{{ conductor.licencia }}" placeholder="Ingrese la licencia">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_fecha_nacimiento" class="form-label"><b>Fecha de Nacimiento:</b></label>
+                    <input type="date" class="form-control" name="txt_fecha_nacimiento" id="txt_fecha_nacimiento" value="{{ conductor.fecha_nacimiento|date:'Y-m-d' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_fecha_ingreso" class="form-label"><b>Fecha de Ingreso:</b></label>
+                    <input type="date" class="form-control" name="txt_fecha_ingreso" id="txt_fecha_ingreso" value="{{ conductor.fecha_ingreso|date:'Y-m-d' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_telefono" class="form-label"><b>Teléfono:</b></label>
+                    <input type="text" class="form-control" name="txt_telefono" id="txt_telefono" value="{{ conductor.telefono }}" placeholder="Ingrese el número de teléfono">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_direccion" class="form-label"><b>Dirección:</b></label>
+                    <textarea class="form-control" name="txt_direccion" id="txt_direccion" rows="3" placeholder="Ingrese la dirección">{{ conductor.direccion }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_estado" class="form-label"><b>Estado:</b></label>
+                    <select class="form-control" name="txt_estado" id="txt_estado">
+                        <option value="Activo" {% if conductor.estado == 'Activo' %}selected{% endif %}>Activo</option>
+                        <option value="Suspendido" {% if conductor.estado == 'Suspendido' %}selected{% endif %}>Suspendido</option>
+                        <option value="Retirado" {% if conductor.estado == 'Retirado' %}selected{% endif %}>Retirado</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="txt_foto" class="form-label"><b>Foto:</b></label>
+                    {% if conductor.foto %}
+                        <div>
+                            <img src="{{ conductor.foto.url }}" alt="Foto del conductor" width="100" height="100" class="mb-3">
+                        </div>
+                    {% endif %}
+                    <input type="file" class="form-control" name="txt_foto" id="txt_foto" accept="image/*">
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-lg mx-2">Guardar</button>
+                    <a href="{% url 'listado_conductor' %}" class="btn btn-danger btn-lg mx-2">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "plantilla.html" %}
+
+{% block contenido %}
+
+<div class="container mt-5">
+    <h3 class="text-center">Listado de Horarios</h3>
+    <a href="{% url 'agregarHorario' %}" class="btn btn-primary mb-3">Agregar Horario</a>
+    <table class="table table-striped w-100"  id="tabla-horario">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ruta</th>
+                <th>Precio</th>
+                <th>Hora de Salida</th>
+                <th>Hora de Llegada</th>
+                <th>Bus responsable</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for horario in horario %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ horario.ruta.origen }} - {{ horario.ruta.destino }}</td>
+                <td>${{ horario.ruta.precio }}</td>
+                <td>{{ horario.hora_salida }}</td>
+                <td>{{ horario.hora_llegada }}</td>
+                <td>
+                    {% if horario.bus %}
+                        {{ horario.bus.nombre_bus }} {{ horario.bus.numero_bus }}
+                    {% else %}
+                        Sin asignar
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'editar_horario' horario.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'eliminarHorario' horario.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este horario?')">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No hay horarios registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#tabla-horario').DataTable({
+            "language": {
+                "sEmptyTable": "No hay datos disponibles",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "sInfoFiltered": "(filtrado de _MAX_ entradas)",
+                "sInfoPostFix": "",
+                "sLengthMenu": "Mostrar _MENU_ entradas",
+                "sLoadingRecords": "Cargando...",
+                "sProcessing": "Procesando...",
+                "sSearch": "Buscar:",
+                "sZeroRecords": "No se encontraron resultados",
+                "oPaginate": {
+                    "sFirst": "<",
+                    "sLast": ">",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            },
+            "lengthMenu": [ [5, 10, 15, 20], [5, 10, 15, 20] ], // Opciones de paginación
+            "initComplete": function() {
+                // Cambiar el tamaño del input de búsqueda
+                $('input[type="search"]').css({
+                    "width": "400px", // Ancho del campo de búsqueda
+                    "padding": "8px"
+                });
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

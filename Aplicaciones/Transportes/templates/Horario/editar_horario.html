@@ -1,0 +1,59 @@
+{% extends "plantilla.html" %}
+{% block contenido %}
+
+<div class="container mt-5">
+    <h3 class="text-center">Editar Horario</h3>
+    <form action="{% url 'editar_horario' horario.id %}" method="POST" class="p-4 border rounded bg-light">
+        {% csrf_token %}
+
+        <!-- Selección de Ruta -->
+        <div class="mb-3">
+            <label for="ruta" class="form-label"><b>Selecciona una Ruta:</b></label>
+            <select class="form-control" id="ruta" name="ruta" required>
+                {% for ruta in ruta %}
+                    <option value="{{ ruta.id }}" {% if ruta.id == horario.ruta.id %}selected{% endif %}>
+                        {{ ruta.origen }} - {{ ruta.destino }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+
+        <!-- Hora de Salida -->
+        <div class="mb-3">
+            <label for="hora_salida" class="form-label"><b>Hora de Salida:</b></label>
+            <input type="time" class="form-control" id="hora_salida" name="hora_salida" required value="{{ horario.hora_salida }}">
+        </div>
+
+        <!-- Hora de Llegada -->
+        <div class="mb-3">
+            <label for="hora_llegada" class="form-label"><b>Hora de Llegada:</b></label>
+            <input type="time" class="form-control" id="hora_llegada" name="hora_llegada" required value="{{ horario.hora_llegada }}">
+        </div>
+
+        <div class="form-group">
+            <label for="bus">Bus Responsable:</label>
+            <select name="bus" id="bus" class="form-control">
+                <!-- Opción para dejar vacío -->
+                <option value="" {% if not horario.bus %}selected{% endif %}>-- Sin asignar --</option>
+                
+                <!-- Lista de buses -->
+                {% for bus in bus %}
+                    <option value="{{ bus.id }}" {% if horario.bus and bus.id == horario.bus.id %}selected{% endif %}>
+                        {{ bus.nombre_bus }} {{ bus.numero_bus }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        
+
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-success btn-lg mx-2">Guardar Cambios</button>
+            <button type="button" class="btn btn-danger btn-lg mx-2" onclick="window.location.href='{% url 'listado_horario' %}'">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

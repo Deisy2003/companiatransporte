@@ -1,0 +1,23 @@
+{% extends 'plantilla.html' %}
+
+{% block content %}
+<h2 class="text-center">Reporte de Ventas</h2>
+
+<!-- Mostrar las ventas -->
+<div class="container mt-4">
+    <h3>Ventas</h3>
+    {% if ventas %}
+        <ul>
+            {% for venta in ventas %}
+                <li>Venta ID: {{ venta.id }} - Cliente: {{ venta.cliente.nombre }} - Total: ${{ venta.total }} - Fecha: {{ venta.fecha_compra }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay ventas registradas.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'reporte_ventas' %}" class="btn btn-success">Descargar Reporte de Ventas</a>
+
+
+{% endblock %}
